@@ -122,18 +122,18 @@ double Piezo_Channel(int time, double pressure_temp){
 
     P_opening_temp = 1/(exp((0.5 - P_total)/0.1) + 1) - 0.00669;
 
-    tau_inact = 0.999;
-    tau_open = 0.9; 
-
     double delta_T = 1;
+
+    tau_inact = exp(-delta_T/500);
+    tau_open = exp(-delta_T/12); 
 
     vec_open1.push_back(tau_open*vec_open1[time] + (1 - exp(-delta_T*P_opening_temp))*vec_closed[time]);
     vec_inactive_held.push_back(((1 - exp(-delta_T*P_P))*vec_inactive_held[time]) + (P_P*vec_open1[time])*(1-tau_open));
     vec_inactive.push_back(tau_inact*vec_inactive[time] + ((1 - P_P)*(1-tau_open)*vec_open1[time]) + ((exp(-delta_T*P_P))*vec_inactive_held[time]));
     vec_closed.push_back((exp(-delta_T*P_opening_temp))*vec_closed[time] + (vec_inactive[time] - tau_inact*vec_inactive[time]));
 
-    tau_inact2 = 0.99;
-    tau_open2 = 0.98; 
+    tau_inact2 = exp(-delta_T/1000);
+    tau_open2 = exp(-delta_T/1000); 
 
     // vec_open2.push_back(tau_open2*vec_open2[time] + P_P*vec_closed2[time]);
     // vec_inactive2.push_back(tau_inact2*vec_inactive2[time] + (1 - tau_open2)*vec_open2[time]);
