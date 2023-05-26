@@ -24,6 +24,11 @@ vector<double> vec_P_Pressure;
 vector<double> vec_P_Voltage;
 vector<double> vec_P_Total; 
 
+vector<double> vec_open1;
+vector<double> vec_inactive;
+vector<double> vec_inactive_held;
+vector<double> vec_closed;
+
 vector<int> vec_Channel;
 
 vector<int> vec_Channel0;
@@ -37,7 +42,7 @@ vector<int> vec_Channel7;
 vector<int> vec_Channel8;
 vector<int> vec_Channel9;
 
-double delta_T = 0.1; 
+double delta_T = 1; 
 
 double Reset_vecs(double i){
 
@@ -46,6 +51,11 @@ double Reset_vecs(double i){
     vec_P_Voltage.clear();
     vec_P_Total.clear();
     vec_Channel.clear();
+
+    vec_open1.clear();
+    vec_inactive.clear();
+    vec_inactive_held.clear();
+    vec_closed.clear();
 
     return(0);
 }
@@ -107,24 +117,60 @@ double Piezo_Channel(int x, double pressure){
     cout << pressure << endl;
 
     vec_Channel.push_back(0);
+    vec_open1.push_back(0);
+    vec_inactive_held.push_back(0);
+    vec_inactive.push_back(0);
+    vec_closed.push_back(1);
 
     random_device rd;
     mt19937 gen(rd());
 
     //cout << "I have been called " << x << " times" << endl;
+    int time = 0; 
 
-    for(double time = 0; time < 100; time+=delta_T){
-        //cout << "I have been called " << x << " times" << endl;
+    for(double counter = 0; counter < 800; counter+=delta_T){
 
-        if(vec_Channel[time] == 0){
-            p = P_open(pressure);
-        }
-        else if(vec_Channel[time] == 1){
-            p = P_close(pressure);
+        double Pressure_input = pressure; 
+        double Substrate_input = 0.5; 
+        double Voltage_input = -70; 
+
+        if(counter < 200 || counter > 600){
+            Pressure_input = 0;
         }
         else{
-            cout << "You have an error" << endl;
+            Pressure_input = pressure;
         }
+        //cout << "I have been called " << x << " times" << endl;
+
+        // if(vec_Channel[time] == 0){
+        //     p = P_open(pressure);
+        // }
+        // else if(vec_Channel[time] == 1){
+        //     p = P_close(pressure);
+        // }
+        // else{
+        //     cout << "You have an error" << endl;
+        // }
+
+        double P_P = Piezo_P_Pressure(Pressure_input);
+        double P_S = Piezo_P_Substrate(Substrate_input);
+        double P_V = Piezo_P_Voltage(Voltage_input);
+
+        double P_total = P_P*P_S + P_V;
+
+        vec_P_Total.push_back(P_total);
+
+        double P_opening_temp = 1/(exp((0.5 - P_total)/0.1) + 1) - 0.00669;
+
+        double tau_inact = 0.999;
+        double tau_open = 0.9; 
+        
+        vec_open1.push_back(tau_open*vec_open1[time] + (1 - exp(-delta_T*P_opening_temp))*vec_closed[time]);
+        vec_inactive_held.push_back(((1 - exp(-delta_T*P_P))*vec_inactive_held[time]) + (P_P*vec_open1[time])*(1-tau_open));
+        vec_inactive.push_back(tau_inact*vec_inactive[time] + ((1 - P_P)*(1-tau_open)*vec_open1[time]) + ((exp(-delta_T*P_P))*vec_inactive_held[time]));
+        vec_closed.push_back((exp(-delta_T*P_opening_temp))*vec_closed[time] + (vec_inactive[time] - tau_inact*vec_inactive[time]));
+
+        p = vec_open1[time];
 
         discrete_distribution<> distrib({1 - p, p});
 
@@ -173,7 +219,8 @@ double Piezo_Channel(int x, double pressure){
         else{
             cout << "There is an error" << endl;
         }
-
+        
+        time++;
     }
 
     return(0);
@@ -196,7 +243,7 @@ double output_file(double x){
     vec_Channel9.push_back(0);
 
     for(int i = 0; i < 10; i++){
-        Piezo_Channel(i, 5*i);
+        Piezo_Channel(i, (10+5*i));
         Reset_vecs(0);
         // cout << i << endl;
     }
