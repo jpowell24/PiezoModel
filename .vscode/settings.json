@@ -16,7 +16,13 @@
         "algorithm": "cpp",
         "random": "cpp",
         "initializer_list": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "armadillo": "cpp",
+        "ratio": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     },
     "workbench.colorCustomizations": {
         "terminal.background":"#1D2021",
@@ -39,6 +45,7 @@
         "terminal.ansiRed":"#FB543F",
         "terminal.ansiWhite":"#A89984",
         "terminal.ansiYellow":"#FAC03B"
-      }
+    },
+    //"cmake.sourceDirectory": "C:/Users/Jackson/Code/PiezoModel/cpp_code/lapack-3.11/INSTALL"
 
 }
