@@ -16,7 +16,10 @@
         "algorithm": "cpp",
         "random": "cpp",
         "initializer_list": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "memory": "cpp",
+        "functional": "cpp",
+        "complex": "cpp"
     },
     "workbench.colorCustomizations": {
         "terminal.background":"#1D2021",

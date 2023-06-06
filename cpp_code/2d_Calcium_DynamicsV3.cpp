@@ -9,6 +9,106 @@ normal_distribution<double> stiffness(0.7,0.1);
 normal_distribution<double> pressure(30,5);
 normal_distribution<double> voltage(-70,10);
 
+MatrixXd Pairwise_distances(MatrixXd A, MatrixXd B){
+    MatrixXd Distances(A.cols(),B.cols());
+    for(int i = 0; i < A.cols(); i++){
+        for(int j = 0; j < B.cols(); j++){
+            Distances(i,j) = sqrt((A.col(i) - B.col(j)).array().pow(2).sum());
+        }
+    }
+    return(Distances);
+}
+
+VectorXd vec_std_to_Eigen(vector<double> convert_me){
+    int size = convert_me.size(); 
+    VectorXd A(size);
+    for(int i = 0; i < size; i++){
+        A[i] = convert_me[i];
+    }
+    return(A);
+}
+
+MatrixXd mat_std_to_Eigen(vector<vector<double>> convert_me){
+    int rows = convert_me.size(); 
+    int cols = convert_me[0].size(); 
+    MatrixXd A(rows,cols);
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            A(i,j) = convert_me[i][j];
+        }
+    }
+    return(A);
+}
+
+vector<double> vec_Eigen_to_std(VectorXd convert_me){ 
+    int size = convert_me.size();
+    vector<double> A(size);
+    for(int i = 0; i < size; i++){
+        A[i] = convert_me[i];
+    }
+    return(A);
+}
+
+vector<vector<double>> mat_Eigen_to_std(MatrixXd convert_me){
+    int rows = convert_me.rows(); 
+    int cols = convert_me.cols(); 
+    vector<double> B;
+    vector<vector<double>> A;
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            B.push_back(convert_me(i,j));
+        }
+        A.push_back(B);
+        B.clear();
+    }
+    return(A);
+}
+
+MatrixXd euler_A_maker(int size){
+
+    MatrixXd euler_A_temp = MatrixXd::Zero(size, size);
+
+        for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            if((i < size - 1) && (j < size - 1) && (i > 0) && (j > 0)){
+                if(i == j){
+                    euler_A_temp(i,j) = -2;
+                    euler_A_temp(i,j + 1) = 1;
+                    euler_A_temp(i,j - 1) = 1;
+                }
+            }
+            if((i == 0)){
+                if(i == j){
+                    euler_A_temp(i,j) = -1;
+                    euler_A_temp(i,j + 1) = 1;
+                }
+            }
+            if((i == size - 1)){
+                if(i == j){
+                    euler_A_temp(i,j) = -1;
+                    euler_A_temp(i,j - 1) = 1;
+                }
+            }
+        }
+    }
+
+    return(euler_A_temp);
+}
+
+VectorXd backward_euler(VectorXd Diffuse_me, MatrixXd euler_A){
+    int size = Diffuse_me.size();
+
+    euler_A = (delta_T / pow(size_scale,2))*euler_A;
+    VectorXd F2 = VectorXd::Zero(size);
+
+    MatrixXd I(size, size);
+    I.setIdentity(size, size);
+
+    F2 = (I - euler_A).inverse()*Diffuse_me;
+
+    return(F2);
+}
+
 int reset_vecs(int x){
     vec_time.clear();
     vec_buff_bound.clear();
@@ -26,41 +126,69 @@ double PotentialE(double out, double in, int Z) { //calculated in VOLTS NOT MILL
     return (E);
 }
 
-double Compute_J_diffusion(int time, int x, int y) { 
+// double Compute_J_diffusion(int time, int x, int y) { 
 
-    // NOTE: diffusion is not scaled to the size of the cell! this is very important!! 
-    // in the current state, a huge cell will have an over-inflated Ca2+ storage
-    // This is because it is more difficult to diffuse through the greater divisions
+//     // NOTE: diffusion is not scaled to the size of the cell! this is very important!! 
+//     // in the current state, a huge cell will have an over-inflated Ca2+ storage
+//     // This is because it is more difficult to diffuse through the greater divisions
 
 
-    double R = 1;
-    double total_diffusion, x_diffusion, y_diffusion;
-    if((x >= 1) && (x <= x_max - 1)){
-        x_diffusion = (1/R)*(vec_time[time][y][x + 1] - (2 * vec_time[time][y][x]) + vec_time[time][y][x - 1]);
-    }
-    if((y >= 1) && (y <= y_max - 1)){
-        y_diffusion = (1/R)*(vec_time[time][y + 1][x] - (2 * vec_time[time][y][x]) + vec_time[time][y - 1][x]);
-    }
+//     double R = 1;
+//     double total_diffusion, x_diffusion, y_diffusion;
+//     if((x >= 1) && (x <= x_max - 1)){
+//         x_diffusion = (1/R)*(vec_time[time][y][x + 1] - (2 * vec_time[time][y][x]) + vec_time[time][y][x - 1]);
+//     }
+//     if((y >= 1) && (y <= y_max - 1)){
+//         y_diffusion = (1/R)*(vec_time[time][y + 1][x] - (2 * vec_time[time][y][x]) + vec_time[time][y - 1][x]);
+//     }
     
-    if((y == 0)){
-        y_diffusion = (1/R)*(vec_time[time][y + 1][x] - (vec_time[time][y][x]));
-    }
-    if((y == y_max)){
-        y_diffusion = (1/R)*(vec_time[time][y - 1][x] - (vec_time[time][y][x]));
+//     if((y == 0)){
+//         y_diffusion = (1/R)*(vec_time[time][y + 1][x] - (vec_time[time][y][x]));
+//     }
+//     if((y == y_max)){
+//         y_diffusion = (1/R)*(vec_time[time][y - 1][x] - (vec_time[time][y][x]));
+//     }
+
+//     if((x == 0)){
+//         x_diffusion = (1/R)*(vec_time[time][y][x + 1] - (vec_time[time][y][x]));
+//     }
+//     if((x == x_max)){
+//         x_diffusion = (1/R)*(vec_time[time][y][x - 1] - (vec_time[time][y][x]));
+//     }
+
+//     //cout << (x_diffusion + y_diffusion) << " " << (divs/100)*(x_diffusion + y_diffusion) << endl;
+
+//     total_diffusion = 1000*(divs/100)*(x_diffusion + y_diffusion);
+
+//   return(total_diffusion);
+// }
+
+vector<vector<double>> Compute_J_diffusion(vector<vector<double>> A){
+    MatrixXd t1; 
+    vector<vector<double>> B;
+
+    t1 = mat_std_to_Eigen(A);
+
+    MatrixXd thalfway(t1.rows(),t1.cols());
+    MatrixXd t2(t1.rows(),t1.cols()); 
+
+    MatrixXd A_cols; 
+    A_cols = euler_A_maker(t1.rows());
+
+    MatrixXd A_rows; 
+    A_rows = euler_A_maker(t1.cols());
+    
+    for(int i = 0; i < t1.cols(); i++){
+        thalfway.col(i) = backward_euler(t1.col(i), A_cols);
     }
 
-    if((x == 0)){
-        x_diffusion = (1/R)*(vec_time[time][y][x + 1] - (vec_time[time][y][x]));
-    }
-    if((x == x_max)){
-        x_diffusion = (1/R)*(vec_time[time][y][x - 1] - (vec_time[time][y][x]));
+    for(int i = 0; i < thalfway.rows(); i++){
+        t2.row(i) = backward_euler(thalfway.row(i), A_rows);
     }
 
-    //cout << (x_diffusion + y_diffusion) << " " << (divs/100)*(x_diffusion + y_diffusion) << endl;
+    B = mat_Eigen_to_std(t2);
 
-    total_diffusion = 1000*(divs/100)*(x_diffusion + y_diffusion);
-
-  return(total_diffusion);
+    return(B);
 }
 
 double Piezo_P_Pressure(double i){
@@ -241,6 +369,7 @@ double Calcium_concentration(double x){
     double avg_temp, avg_buff_temp, avg_ubuff_temp;
 
     for(int time_temp = 0; time_temp <= time_max_calc; time_temp++){
+        cout << time_temp << endl;
         //cout << "break point 4 " << time_temp << endl;
         for(int i = 0; i <= x_max; i++){
             for(int j = 0; j <= y_max; j++){
@@ -267,7 +396,7 @@ double Calcium_concentration(double x){
 
                 C_cyt = vec_time[time_temp][i][j];
 
-                Ca_c_dT = delta_T*(scaling_factor*Compute_J_diffusion(time_temp, j, i) + scaling_factor*Compute_J_on(C_cyt, time_temp, i, j) + scaling_factor*Compute_efflux(C_cyt, time_temp, i, j, location) + Piezo_Channel(E_Ca, time_temp, i, j, location));
+                Ca_c_dT = delta_T*(scaling_factor*Compute_J_on(C_cyt, time_temp, i, j) + scaling_factor*Compute_efflux(C_cyt, time_temp, i, j, location) + Piezo_Channel(E_Ca, time_temp, i, j, location));
                 //vec_time[time_temp + 1][i][j] = vec_time[time_temp][i][j] + Ca_c_dT;
                 vec_time[time_temp + 1][i][j] = vec_time[time_temp][i][j] + Ca_c_dT;
                 
@@ -288,6 +417,8 @@ double Calcium_concentration(double x){
 
             }
         }
+        vec_time[time_temp + 1] = Compute_J_diffusion(vec_time[time_temp + 1]);
+
         vec_average.push_back(avg_temp/(divide));
         vec_buff_average.push_back(avg_buff_temp/(divide));
         vec_ubuff_average.push_back(avg_ubuff_temp/(divide));
