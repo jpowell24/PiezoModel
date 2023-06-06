@@ -6,7 +6,9 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <Eigen/Dense>
 
+using namespace Eigen;
 using namespace std;
 
 int x_max = 50;
@@ -14,7 +16,7 @@ int y_max = 50;
 double divs = (x_max + 1)*(y_max + 1);
 double mols_divs = 0.0000000012/divs;
 
-int time_max = 10;
+int time_max = 1;
 double delta_T = 0.01;
 int time_max_calc = time_max/delta_T; 
 double divide = (y_max + 1) * (x_max + 1);
