@@ -166,17 +166,23 @@ double PotentialE(double out, double in, int Z) { //calculated in VOLTS NOT MILL
 vector<vector<double>> Compute_J_diffusion(vector<vector<double>> A){
     MatrixXd t1; 
     vector<vector<double>> B;
+    bool euler_A_made; 
+    bool euler_B_made;
 
     t1 = mat_std_to_Eigen(A);
 
     MatrixXd thalfway(t1.rows(),t1.cols());
     MatrixXd t2(t1.rows(),t1.cols()); 
 
-    MatrixXd A_cols; 
-    A_cols = euler_A_maker(t1.rows());
+    if(!euler_A_made){
+        A_cols = euler_A_maker(t1.rows());
+        euler_A_made = true; 
+    }
 
-    MatrixXd A_rows; 
-    A_rows = euler_A_maker(t1.cols());
+    if(!euler_B_made){
+        A_rows = euler_A_maker(t1.cols());
+        euler_B_made = true; 
+    }
     
     for(int i = 0; i < t1.cols(); i++){
         thalfway.col(i) = backward_euler(t1.col(i), A_cols);
@@ -342,7 +348,6 @@ double Compute_efflux(double C_cyt, int time, int x, int y, int loc){
     return(efflux);
 }
 
-
 double Calcium_concentration(double x){
 
     cout << "  High" << endl;
@@ -396,8 +401,13 @@ double Calcium_concentration(double x){
 
                 C_cyt = vec_time[time_temp][i][j];
 
-                Ca_c_dT = delta_T*(scaling_factor*Compute_J_on(C_cyt, time_temp, i, j) + scaling_factor*Compute_efflux(C_cyt, time_temp, i, j, location) + Piezo_Channel(E_Ca, time_temp, i, j, location));
+                // Ca_c_dT = delta_T*(scaling_factor*Compute_J_on(C_cyt, time_temp, i, j) + Piezo_Channel(E_Ca, time_temp, i, j, location));
+                
+                Ca_c_dT = delta_T*(Piezo_Channel(E_Ca, time_temp, i, j, location));
+                
+                
                 //vec_time[time_temp + 1][i][j] = vec_time[time_temp][i][j] + Ca_c_dT;
+                
                 vec_time[time_temp + 1][i][j] = vec_time[time_temp][i][j] + Ca_c_dT;
                 
 

@@ -11,16 +11,16 @@
 using namespace Eigen;
 using namespace std;
 
-int x_max = 50;
-int y_max = 50;
+int x_max = 15;
+int y_max = 15;
 double divs = (x_max + 1)*(y_max + 1);
 double mols_divs = 0.0000000012/divs;
 
-int time_max = 1;
-double delta_T = 0.01;
+double time_max = 300; //in s
+double delta_T = 1; // in s
 int time_max_calc = time_max/delta_T; 
 double divide = (y_max + 1) * (x_max + 1);
-double size_scale = 1/divide; 
+double size_scale = 10*1/divide; 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // 2d specific thingsc
@@ -48,7 +48,7 @@ double E_Ca; // 131.373 --> this is for humans, i.e., body temp of 310K etc. Uns
 // Piezo Kinetics %%%%%%%%%%%%%%%%%%%%%%%%%
 double G_Piezo_single = 0.000000000030; 
 double G_Piezo_total;
-int N_Piezo_channels = 10000;
+int N_Piezo_channels = 100;
 double p_open = 0; 
 vector<vector<vector<double> > > vec_num_open(time_max_calc + 2, vector<vector<double> >(y_max + 1, vector<double>(x_max + 1)));
 double p_closed = 1;
@@ -59,6 +59,14 @@ int open_counter = 0;
 vector<double> vec_P_Substrate;
 vector<double> vec_P_Pressure;
 vector<double> vec_P_Voltage;
+
+vector<double> vec_P_Total; 
+
+vector<double> vec_open1;
+vector<double> vec_inactive;
+vector<double> vec_inactive_held;
+vector<double> vec_closed;
+
 double avg_piezo_temp;
 vector<double> vec_Piezo_average;
 // Piezo1 = 29pS https://www.sciencedirect.com/science/article/pii/S0968000416301505
@@ -152,8 +160,8 @@ vector<vector<vector<double> > > vec_J_serca(time_max_calc + 2, vector<vector<do
 
 // Buffering Definitions %%%%%%%%%%%%%%%%%
 // Reference includes a list of models published by year: https://www.frontiersin.org/articles/10.3389/fncom.2018.00014/full
-double buff_unbound = 0.02*size_scale; //concentration of unbound buffer, which we are taking to be b_total
-double buff_bound = 0.02*size_scale; //concentration of bound buffer
+double buff_unbound = 0.000001; //concentration of unbound buffer, which we are taking to be b_total
+double buff_bound = 0.00001; //concentration of bound buffer
 double buff_total = buff_unbound + buff_bound;
 vector<vector<vector<double> > > vec_buff_bound(time_max_calc + 2, vector<vector<double> >(y_max + 1, vector<double>(x_max + 1)));
 vector<vector<vector<double> > > vec_buff_unbound(time_max_calc + 2, vector<vector<double> >(y_max + 1, vector<double>(x_max + 1)));
@@ -170,3 +178,10 @@ vector<vector<vector<double> > > vec_J_on(time_max_calc + 2, vector<vector<doubl
 // J_off = k_buff_unbind*buff_bound; 
 // buff_c_dT = k_buff_bind*C_cyt*buff_unbound - k_buff_unbind*buff_bound;
 // buff_bound = buff_bound + buff_c_dT;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// Eigen Declarations 
+
+
+MatrixXd A_cols, A_rows; 
