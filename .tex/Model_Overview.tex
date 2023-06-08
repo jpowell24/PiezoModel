@@ -162,11 +162,12 @@ Notably, the vast majority (but not all) of voltage gated channels open at posit
 
 \medskip
 
-\begin{center}
-    
-    $E_x = \frac{RT}{zF}ln(\frac{[x]_{out}}{[x]_{in}})$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+E_x &= \frac{RT}{zF}ln(\frac{[x]_{out}}{[x]_{in}})
+\end{split}
+\end{equation}
+
 
 \medskip
 
@@ -176,11 +177,11 @@ Where $R$, $T$, $z$, and $F$ are constants. And $[x]$ is the concentration eithe
 
 \medskip
 
-\begin{center}
-
-    $V = \frac{g_1E_1 + g_2E_2 + ... + g_kE_k}{g_1 + g_2 + ... + g_k} = \frac{\sum_{n=1}^k g_nE_n}{\sum_{n=1}^k g_n}$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+V &= \frac{g_1E_1 + g_2E_2 + ... + g_kE_k}{g_1 + g_2 + ... + g_k} = \frac{\sum_{n=1}^k g_nE_n}{\sum_{n=1}^k g_n}
+\end{split}
+\end{equation}
 
 \medskip
 
@@ -195,90 +196,99 @@ Where $k$ is the total number of different ions considered in your system. In ef
 
 \end{outline}
 
-\subsection{Where do ions go, and why?} The simple way in which you can tell which direction an ion will go is with the formula: $v - E_x$. If this result is very positive, it means the ion wants to exit the cell, and if it is negative, it will want to enter the cell. Let us consider a practice example!: 
+\subsection{Where do ions go, and why?} The simple way in which you can tell which direction an ion will go is with the formula: $v - E_x$. If this result is very positive, it means the ion wants to exit the cell, and if it is negative, it will want to enter the cell. Let us consider a practice example! Let's assume $[K]_{out} = 5\mathrm{mM}$ and $[K]_{in} = 150\mathrm{mM}$: 
 
-\bigskip
-\begin{center}
 
-    Let's assume $[K]_{out} = 5mM$ and $[K]_{in} = 150mM$\\
-    \smallskip
-    $E_k = \frac{RT}{zF}ln(\frac{[x]_{out}}{[x]_{in}}) \rightarrow 60log_{10}(\frac{[5]_{out}}{[150]_{in}}) \rightarrow \approx -88 mV$\\
-    \smallskip
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+E_k = \frac{RT}{zF}\ln(\frac{[x]_{out}}{[x]_{in}}) \rightarrow 60\log_{10}(\frac{[5]_{out}}{[150]_{in}}) \rightarrow \approx -88 \mathrm{mV}
+\end{split}
+\end{equation}
 
 \bigskip
 
- The resting membrane potential of a neuron is approximately $-60mV$. Therefore, $v - E_k = 28mV$. Because 28 is positive, it means $K^+$ ions want to leave the cell, and will do so whenever potassium ion channels start to open up.  
+ The resting membrane potential of a neuron is approximately $-60\mathrm{mV}$. Therefore, $v - E_k = 28\mathrm{mV}$. Because 28 is positive, it means $K^+$ ions want to leave the cell, and will do so whenever potassium ion channels start to open up.  
 
 \subsection{Changes are small and local} An incredibly common misconception with regard to action potentials is that the ion flux is great, and that is what drives the membrane voltage change. However, this is absolutely untrue! Let's consider an example to show this: 
 
 \bigskip
 
 
-    The capacitance of a cell ($C$) is around $1\mu F/cm^2$. If the radius of the cell is $10\mu m$, the total capacitance is:
+    The capacitance of a cell ($C$) is around $1\mathrm{\mu F}/\mathrm{cm}^2$. If the radius of the cell is $10\mathrm{\mu m}$, the total capacitance is:
 
-\begin{center}
 
-    $C_{total} = C_m \times 4\pi r^2$
+\begin{equation} \label{eq8}
+\begin{split}
+C_{total} = C_m \times 4\pi r^2
+\end{split}
+\end{equation}
 
-\end{center}
+\bigskip
 
     The movement of charge, $q$, can be calculated as:
-    
-\begin{center}
-
-    $q = C_{total}\Delta V$
-
-\end{center}
-
-    The change in $V$ of an AP is approximately $100mV$, so:
-
-\begin{center}
-
-    $q = 1.3 \times 10^{-12}C$
-
-\end{center}
-
-    Dividing this number by Faraday's constant, $F$, gives moles, $m$. You can divide the moles by the volume to approximate $\Delta C$:
-
-\begin{center}
-
-    $\Delta C = \frac{m}{4\pi r^3 /3} \rightarrow 3.2 \times 10^{-7} mM$
-    
-\end{center}
 
 \bigskip
 
-If the concentration of potassium is around $150mM$, this $3.1 \times 10^{-7} mM$ is representative of a negligible change in concentration. 
-
-\subsection{Change in concentration at the growth cone} In order that we may apply this to the growth cone we get an r value of approximately $1.75 \mu m$, and I am interested in finding the change in concentration that is capable of increasing the voltage by approximately $15mV$, indicative of reaching the threshold: 
+\begin{equation} \label{eq8}
+\begin{split}
+q = C_{total}\Delta V
+\end{split}
+\end{equation}
 
 \bigskip
 
-\begin{center}
+    The change in $V$ of an AP is approximately $100\mathrm{mV}$, so:
 
-    $C_{total} = 10^{-6} F/cm^2 \times 4\pi (0.000175cm)^2$
+\bigskip
 
-    $m = q/F = (3.8 \times 10^{-13}F \times 0.015V) / 96500 C/mol$
+\begin{equation} \label{eq8}
+\begin{split}
+q = 1.3 \times 10^{-12}\mathrm{C}
+\end{split}
+\end{equation}
 
-\end{center}
+\bigskip
+
+    Dividing this number by Faraday's constant, $\mathrm{F}$, gives moles, $\mathrm{m}$. You can divide the moles by the volume to approximate $\Delta C$:
+
+\begin{equation} \label{eq8}
+\begin{split}
+\Delta C = \frac{\mathrm{m}}{4\pi r^3 /3} \rightarrow 3.2 \times 10^{-7} \mathrm{mM}
+\end{split}
+\end{equation}
+
+\bigskip
+
+If the concentration of potassium is around $150\mathrm{mM}$, this $3.1 \times 10^{-7} \mathrm{mM}$ is representative of a negligible change in concentration. 
+
+\subsection{Change in concentration at the growth cone} In order that we may apply this to the growth cone we get an r value of approximately $1.75 \mu m$, and I am interested in finding the change in concentration that is capable of increasing the voltage by approximately $15\mathrm{mV}$, indicative of reaching the threshold: 
+
+\bigskip
+
+\begin{equation} \label{eq8}
+\begin{split}
+C_{total} = 10^{-6} \mathrm{F}/\mathrm{cm}^2 \times 4\pi (0.000175\mathrm{cm})^2 \\
+\mathrm{m} = q/\mathrm{F} = (3.8 \times 10^{-13}\mathrm{F} \times 0.015\mathrm{V}) / 96500 \mathrm{C}\cdot\mathrm{mol}^{-1}
+\end{split}
+\end{equation}
+
+
 
 \bigskip
 
     Thus, we get:
 
     \bigskip
-    
-\begin{center}
 
-    $\Delta C = \frac{5.99\times10^{-20}}{4\pi (0.000175cm)^3 /3} \rightarrow 2.7 \times10^{-9} M$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+\Delta C = \frac{5.99\times10^{-20}}{4\pi (0.000175\mathrm{cm})^3 /3} \rightarrow 2.7 \times10^{-9} \mathrm{M}
+\end{split}
+\end{equation}
 
 \bigskip
 
-In other words, the change in concentration required for a growth cone to rise by $15mV$ is $\approx$ 2-3$nM$.  
+In other words, the change in concentration required for a growth cone to rise by $15\mathrm{mV}$ is $\approx$ 2-3$nM$.  
 
 
 
@@ -308,11 +318,11 @@ In other words, the change in concentration required for a growth cone to rise b
 
 \bigskip
 
-\begin{center}
-
-    $C\dot{V} = I - I_{Na} - I_{K} - I_{Leak}$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+C\dot{V} = I - I_{Na} - I_{K} - I_{Leak}
+\end{split}
+\end{equation}
 
 \bigskip
 
@@ -320,11 +330,11 @@ Because the equations can be found in nearly any textbook\footnote{Izhikevich, \
 
 \bigskip
 
-\begin{center}
-
-    $C\dot{V} = I - \bar{g}_{Na}m^3h(V - E_{Na}) - \bar{g}_{K}n^4(V - E_{K}) - \bar{g}_{L}(V - E_{L})$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+C\dot{V} = I - \bar{g}_{Na}m^3h(V - E_{Na}) - \bar{g}_{K}n^4(V - E_{K}) - \bar{g}_{L}(V - E_{L})
+\end{split}
+\end{equation}
 
 \bigskip 
 
@@ -435,6 +445,8 @@ $D$ is our spatial dependence, which represents the diffusion of charge around t
 
 \section{Ion Channel General Forms}
 
+\subsection{}
+
 \section{Calcium Dynamics}
 
 \subsection{Overarching Equation} As with the previous ideas, the compounded equation is a summation of the currents generated by calcium flux equating to $dCa / dt$.\newline
@@ -489,23 +501,32 @@ Where $v_D$ is the dyadic space volume, $g_{ryr}$ is the RyR channel conductance
 This covers things like leak. To include calcium activation, we will want to use something like this\footnote{Note: there seems to be an issue with $\dot{w}$ in the equations below. It seems that $w$ will be hard clamped to 1 due to the power with which the cytosolic $Ca^{2+}$ concentration is. Need to fix this.}: 
 
 \bigskip
-\begin{center}
 
-    $J_{ryr} = (v_{rel}P_{open} + v_{leak})(C_{er} - C_{cyt})$\\
-    \smallskip
-    $P_{open} = \frac{w(1 + C^3_{cyt} / K_b)}{K_a / C^4_{cyt} + 1 + C_{cyt}^3/ K_b}$\\
-    \smallskip
-    $\dot{w} = \frac{w_{\infty} - w}{\tau_w}; w_{\infty} = \frac{K_a / C^4_{cyt} + 1 + C_{cyt}^3/ K_b}{1/K_c + K_a / C^4_{cyt} + 1 + C_{cyt}^3/ K_b}; \tau_w = w_{\infty}/K_d$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+J_{ryr} &= (v_{rel}P_{open} + v_{leak})(C_{er} - C_{cyt})\\
+P_{open} &= \frac{w(1 + C^3_{cyt} / K_b)}{K_a / C^4_{cyt} + 1 + C_{cyt}^3/ K_b}\\
+\end{split}
+\end{equation}
+
+\begin{equation} \label{eq8}
+\begin{split}
+w_{\infty} &= \frac{K_a / C^4_{cyt} + 1 + C_{cyt}^3/ K_b}{1/K_c + K_a / C^4_{cyt} + 1 + C_{cyt}^3/ K_b} \\
+\tau_w &= w_{\infty}/K_d
+\end{split}
+\end{equation}
+
+\bigskip
 
 And for $J_{ser}$:
 
-\begin{center}
+\bigskip
 
-    $J_{ser} = v_{ser}\frac{C^2_{cyt}}{C^2_{cyt} + K^2_P}$\\
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+J_{ser} = v_{ser}\frac{C^2_{cyt}}{C^2_{cyt} + K^2_P}\\
+\end{split}
+\end{equation}
 
 \bigskip
 
@@ -515,11 +536,11 @@ And for $J_{ser}$:
 
  \bigskip
 
- \begin{center}
-
-    $J_{serca} = \frac{c^2 - K_1K_2K_3K_4K_5K_6c_e^2}{\alpha_1c^2 + \alpha_2c_e^2 + \alpha_3c^2c^2_e + \alpha_4}$
-     
- \end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+J_{serca} = \frac{c^2 - K_1K_2K_3K_4K_5K_6c_e^2}{\alpha_1c^2 + \alpha_2c_e^2 + \alpha_3c^2c^2_e + \alpha_4}\\
+\end{split}
+\end{equation}
 
  \bigskip
 
@@ -552,20 +573,116 @@ I am taking this to be:
 
 Meaning that there is approx 6 molecules of $Ca^{2+}$ in a 20 $\times$ 20 box.
 
-\subsection{Diffusion} Diffusion is accomplished using some diffusion coefficient. In the \textbf{Overarching Equation} this is stated as $D_c$. This value can be tuned however desired. The important bit is the second derivative of $Ca$ with respect to space. This is done simply in the general form of a second derivative, as written below: 
+\subsection{Diffusion} Note that in the coming sections, $[f]$ is used to describe the concentration of some molecule $f$. 
 
-\begin{center}
+\subsubsection{Forward Euler's} Diffusion is accomplished using some diffusion coefficient ($D_c$) multiplied by some measure of the proportion in one compartment verses another (often $\partial^2 [f]/\partial x^2)$. $D_c$ can be tuned however desired. The important bit is the second derivative of $[f]$ with respect to space. This can be done using the general form of a second derivative, as written below: 
 
-    $f'' = \frac{f_{x - 1} - 2f_x + f_{x + 1}}{x^2}$
-    
-\end{center}
+\begin{equation} \label{eq8}
+\begin{split}
+f'' = \frac{f_{x + 1} - 2f_x + f_{x - 1}}{x^2}
+\end{split}
+\end{equation}
 
 \bigskip
 
-In this case, you can simply say that $x$ is one division, and therefore ignore the denominator. I don't recall if I mentioned this elsewhere, but one may wonder how one would solve for an edge case, as the general form of a second derivative requires three data points. The solution is that it is simply the first derivative of the non-edge side. That is, since the second derivative is the difference in derivatives, that leaves simply the derivative of one side minus zero.\newline
+One may wonder how one would solve for an edge case, as the general form of a second derivative requires three data points. There are some nuances, but in general the solution is simply the first derivative of the non-edge side. That is, since the second derivative is the difference in derivatives, that leaves simply the derivative of one side minus zero.\newline
 
-Evidently, this method has some slight issues in which the $[Ca^{2+}]$ can occasionally go negative. How this occurs, I am unsure. But this can be avoided explicitly using some other methods, which will perhaps be discussed later. 
+This method has some slight issues in which the $[f]$ can occasionally go negative. The way in which this occurs is stated below (note that now $[f]$ is used instead of $f$ to signify concentration at a value $x$ and time $t$). We can first describe a simplified version of the problem:\newline
 
+\begin{equation} \label{eq8}
+\begin{split}
+[f]_i & = f_0\exp(-mt) \\
+\frac{d[f]}{dt} & = \frac{[f]_{i+1} - [f]_{i}}{\Delta t} = -m[f]_i \\
+[f]_{i+1} & = (1-m\Delta t)[f]_i = [f]_i - m\Delta t [f]_i \\
+[f]_{i} & = (1-m\Delta t)[f]_{i-1} = (1-m\Delta t)^2[f]_{i-2} \\
+[f]_{i} & = (1-m\Delta t)^i[f]_{0} \\
+\end{split}
+\end{equation}
+
+You can see easily, from this, that if $\Delta t$ is too big, you will abandon the characteristic decay you'd expect from $f_0\exp(-mt)$, and instead get some diverging oscillatory function. How this applies to our interest in diffusion is described below: 
+
+\begin{equation} \label{eq8}
+\begin{split}
+\frac{[f]^{t+1}_{x} - [f]^{t}_{x}}{\Delta t} &= \frac{[f]^{t}_{x+1} - 2[f]^{t}_x + [f]^{t}_{x - 1}}{x^2}\\
+[f]^{t+1}_{x} - [f]^{t}_{x} &= \frac{\Delta t}{x^2} \pr{[f]^{t}_{x+1} - 2[f]^{t}_x + [f]^{t}_{x - 1}} \\
+[f]^{t+1}_{x} &= \frac{\Delta t}{x^2} [f]^{t}_{x+1} + \pr{1 - 2\frac{\Delta t}{x^2}}[f]^{t}_x + \frac{\Delta t}{x^2}[f]^{t}_{x - 1} \\
+\end{split}
+\end{equation}
+
+Therefore, if we want to ensure that the concentration is always positive, we are constrained by: 
+
+\begin{equation} \label{eq8}
+\begin{split}
+1 - 2\frac{\Delta t}{x^2} & = 0\\
+\Delta t & < \frac{x^2}{2}\\
+\end{split}
+\end{equation}
+
+The relevance of this being that if one were interested in modeling on a very small $\Delta x$, then one would have to use a $\Delta t$ that is not physiological, and thus waste a great deal of computing power in doing so. This can be avoided explicitly using some other methods, discussed next. 
+
+\subsubsection{Backward Euler's} This form serves to solve the time-scale dilemma by swapping $[f]_{x+1}$, and can be used with any $\Delta t$. Let us consider the same example from above: 
+
+\begin{equation} \label{eq8}
+\begin{split}
+[f]_i & = f_0\exp(-mt) \\
+\frac{d[f]}{dt} & = \frac{[f]_{i+1} - [f]_{i}}{\Delta t} = -m[f]_{i+1} \\
+[f]_{i+1} - [f]_{i} & = -m\Delta t[f]_{i+1} \\
+[f]_{i+1} & = \frac{1}{1+m\Delta t}[f]_{i} \\
+\end{split}
+\end{equation}
+
+Naturally, there is no longer a concern of the size of $\Delta t$. Though, one immediate concern is the difficulty of solving your equation for $[f]_{i+1}$. Getting back to the diffusion interest, we now have:
+
+\begin{equation} \label{eq8}
+\begin{split}
+\frac{[f]^{t+1}_{x} - [f]^{t}_{x}}{\Delta t} &= \frac{[f]^{t+1}_{x+1} - 2[f]^{t+1}_x + [f]^{t+1}_{x - 1}}{x^2}\\
+[f]^{t+1}_{x} - [f]^{t}_{x} &= \frac{\Delta t}{x^2} \pr{[f]^{t+1}_{x+1} - 2[f]^{t+1}_x + [f]^{t+1}_{x - 1}} \\
+\end{split}
+\end{equation}
+
+
+Which simply replaces the previous $[f]^{t}_{x}$ with $[f]^{t+1}_{x}$. This leaves us with three unknowns (those being $[f]^{t+1}$ at $x-1,x,x+1$). We must use linear algebra to solve by first rewriting the left and right side as vectors and a matrix in the following way: 
+
+\begin{align}
+\vec{[f]}^{t+1} &= \begin{bmatrix}
+        [f]^{t+1}_{0} \\
+        [f]^{t+1}_{1} \\
+        \vdots \\
+        [f]^{t+1}_{x}
+\end{bmatrix}
+; \vec{[f]}^{t} = \begin{bmatrix}
+        [f]^{t}_{0} \\
+        [f]^{t}_{1} \\
+        \vdots \\
+        [f]^{t}_{x}
+\end{bmatrix}
+\end{align}
+
+and 
+\begin{align}
+\mathrm{A} = \frac{\Delta t}{x^2}
+\begin{bmatrix} %%%%%%%%%%%%%%
+\dots       &   \dots       & \dots     &   \dots    &   \dots   \\
+1           &   -2          & 1         &            &   \vdots    \\
+\vdots      &   1           & -2        &   1        &   \vdots   \\   
+\vdots      &               & 1         &   -2       &   1    \\
+\dots       &   \dots       & \dots     &   \dots    &   \dots    \\
+\end{bmatrix}
+\end{align}
+
+The edges $11$ and $x,x$ positions were intentionally omitted, as what one desires to do with this is dependent on how they would prefer to treat their edges. As described before in the \textit{Forward Euler's} method, one can use instead of the $(1,-2,1)$ pattern, simply $(\varnothing,-1,1)$ pattern, which signifies a closed edge. Therefore, together now we get: 
+
+\begin{equation} \label{eq8}
+\begin{split}
+\vec{[f]}^{t+1} - \vec{[f]}^{t} & = \mathrm{A} \vec{[f]}^{t+1} \\
+\mathrm{I}\vec{[f]}^{t+1} - \mathrm{A}\vec{[f]}^{t+1} & = \vec{[f]}^{t} \\
+\vec{[f]}^{t+1} & = (\mathrm{I} - \mathrm{A})^{-1}\vec{[f]}^{t}
+\end{split}
+\end{equation}
+
+Where I is the identity matrix. 
+
+\subsubsection{Remarks} Foward Euler's is explicit, and will be preferred whenever the differential equations are non-stiff\footnote{On approximately the same time scale.}. It is the more accurate of the two methods, and can be less computationally intensive if your decay rates are all slow. Backward Euler's is implicit, and can not be used to solve everything, but is doable in most cases. The extra computation required to solve the system of equations more than makes up for potential limitations in your $\Delta t$. 
 
  \section{Piezo Itself Try 1}
 
@@ -649,7 +766,7 @@ P_V = \frac{1}{\exp\pr{\pr{100 - V}/20} + 1}
 
 \bigskip
 
-The units being in $mV$. However, I think that even this is not necessary, as it will only be relevant during an action potential, which, in our case, does not occur. 
+The units being in $\mathrm{mV}$. However, I think that even this is not necessary, as it will only be relevant during an action potential, which, in our case, does not occur. 
 
 \subsection{Pressure Gating} Pressure gating is likely the most relevant of the pack. $30mmHg$ seems to be the most accurate half-max pressure\footnote{\url{https://www.sciencedirect.com/science/article/pii/S0968000421000220\#bb0270}}\footnote{\url{https://www.science.org/doi/full/10.1126/science.1193270?casa_token=gKZRiU1R_vAAAAAA\%3AAuhBFZP-QjXckn7G9aBL6A_ZJfCjsRrUIqoXCbBA1887i29wPWtzlMBfdwShr45kBM7Pj-N4NYVlfEQ}}. We can again consider a sigmoid curve as follows: 
 
@@ -803,10 +920,10 @@ I set $\tau_{open3}, \tau_{inact} \approx 100$ms, and $\tau_{open} \approx 10$ms
 
 \begin{equation} \label{eq8}
 \begin{split}
-N_{open1}^{i+1} &=  e^{-\Delta t / \tau_{open}}N_{open1}^{i} + P_{total}N_{closed}^{i} \\ 
-N_{open2}^{i+1} &= P_{P}N_{open2}^{i} + P_{P}\pr{1-e^{-\Delta t / \tau_{open}}}N_{open1}^{i} \\ 
-N_{inactive}^{i+1} &= e^{-\Delta t / \tau_{inact}}N_{inactive}^{i} + \pr{1-P_{P}}\pr{1-e^{-\Delta t / \tau_{open}}}N_{open1}^{i} + \pr{1-P_P}N_{open2}^{i}\\
-N_{closed}^{i+1} &= \pr{1 - P_{total}}N_{closed}^{i} + \pr{1-e^{\Delta t / \tau_{inact}}}N_{inactive}^{i} \\
+N_{open1}^{i+1} &=  e^{-\Delta t / \tau_{open}}N_{open1}^{i} + \pr{1 - e^{-\Delta t P_{total}}}N_{closed}^{i} \\ 
+N_{open2}^{i+1} &= \pr{1 - e^{-\Delta t P_{total}}}N_{open2}^{i} + P_{P}\pr{1-e^{-\Delta t / \tau_{open}}}N_{open1}^{i} \\ 
+N_{inactive}^{i+1} &= e^{-\Delta t / \tau_{inact}}N_{inactive}^{i} + \pr{1-P_{P}}\pr{1-e^{-\Delta t / \tau_{open}}}N_{open1}^{i} + e^{-\Delta t P_{P}}N_{open2}^{i}\\
+N_{closed}^{i+1} &= e^{-\Delta t P_{total}}N_{closed}^{i} + \pr{1-e^{\Delta t / \tau_{inact}}}N_{inactive}^{i} \\
 \end{split}
 \end{equation}
 
@@ -840,5 +957,15 @@ N_{inactive}^{i+1} &= e^{-\Delta t / \tau_{inact}}N_{inactive}^{i} + \pr{1-e^{-\
 N_{closed}^{i+1} &= \pr{1 - P_{P}}N_{closed}^{i} + \pr{1-e^{\Delta t / \tau_{inact}}}N_{inactive}^{i} \\
 \end{split}
 \end{equation}
+
+\subsection{Single Channel Simulation} One can model the activity of a single channel by running the following: 
+
+\begin{equation} \label{eq8}
+\begin{split}
+T = \frac{1}{P}\ln X
+\end{split}
+\end{equation}
+
+Where $T$ is the time for the next transition to occur, $P$ is the probability of a transition occurring, and $X$ is a randomly generated number. 
 
 \end{document}
