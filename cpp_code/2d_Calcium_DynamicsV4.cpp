@@ -98,7 +98,7 @@ MatrixXd euler_A_maker(int size){
 VectorXd backward_euler(VectorXd Diffuse_me, MatrixXd euler_A){
     int size = Diffuse_me.size();
 
-    euler_A = (delta_T / pow(size_scale,2))*euler_A;
+    euler_A = (delta_T / pow(delta_X,2))*euler_A;
     VectorXd F2 = VectorXd::Zero(size);
 
     MatrixXd I(size, size);

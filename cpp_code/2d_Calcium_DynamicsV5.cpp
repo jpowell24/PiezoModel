@@ -9,6 +9,12 @@ normal_distribution<double> stiffness(0.7,0.1);
 normal_distribution<double> pressure(30,5);
 normal_distribution<double> voltage(-70,10);
 
+// Questions for Dr. Mori: 
+// 1) How to convert from current to molar content (or, do we need to?)
+// 2) Ca2+ accumulation at the corners---double counted or inherent?
+// 3) delta_T seems to not be perfect---i.e., increasing delta_T doesn't seem to be linear
+// 4) Should we solve for concentration or mols/division
+
 MatrixXd Pairwise_distances(MatrixXd A, MatrixXd B){
     MatrixXd Distances(A.cols(),B.cols());
     for(int i = 0; i < A.cols(); i++){
@@ -97,7 +103,7 @@ MatrixXd euler_A_maker(int size){
 VectorXd backward_euler(VectorXd Diffuse_me, MatrixXd euler_A){
     int size = Diffuse_me.size();
 
-    euler_A = (delta_T / pow(size_scale,2))*euler_A;
+    euler_A = (delta_T / pow(delta_X,2))*euler_A;
     VectorXd F2 = VectorXd::Zero(size);
 
     MatrixXd I(size, size);
@@ -212,7 +218,7 @@ double J_Piezo(int time_counter, double Pressure_input, double Substrate_input, 
     return(p);
 }
 
-double Compute_efflux(double C_cyt, int loc){
+double Compute_J_efflux(double C_cyt, int loc){
     double efflux;
 
     if(C_cyt > mols_divs){
@@ -229,22 +235,22 @@ double Compute_J_on(double C_cyt){
     k_buff_bind = 0.600; //for the buffer BAPTA in mM
     k_buff_unbind = 0.100;
 
-    J_on = (C_cyt/mols_divs)*k_buff_bind*C_cyt*buff_unbound;
-    J_off = (mols_divs/C_cyt)*k_buff_unbind*buff_bound; 
+    J_on = delta_T*(C_cyt/mols_divs)*k_buff_bind*C_cyt*buff_unbound;
+    J_off = delta_T*(mols_divs/C_cyt)*k_buff_unbind*buff_bound; //multiplying by delta_T to scale with time
 
     buff_diff = J_off - J_on;
 
-    return(buff_diff*0.000001); //*0.000001
+    return(buff_diff); //*0.000001
 }
 
-double main2(int x){
+double Model_Growth_Cone(int x){
     ofstream create_file(path1);
     ofstream myfile;
     myfile.open(path1);
 
     for(int i = 0; i <= x_max; i++){
         for(int j = 0; j <= y_max; j++){
-            vec_time[0][i][j] = mols_divs;
+            vec_time[0][i][j] = 0.00000012;
             vec_num_closed[0][i][j] = N_Piezo_channels;
             vec_num_open[0][i][j] = 0;
             vec_Piezo_current[0][i][j] = 0;
@@ -252,18 +258,19 @@ double main2(int x){
             vec_buff_unbound[0][i][j] = buff_unbound;
         }
     }
-    vec_average.push_back(mols_divs);
+    vec_average.push_back(0.00000012);
 
-    for(int time_temp = 0; time_temp <= time_max_calc; time_temp++){
+    int counter = 0; 
+    for(double time_temp = 0; time_temp <= time_max; time_temp+=delta_T){
         cout << time_temp << endl;
 
         double P_Piezo;
 
-        if(time_temp % 100 < 9 && time_temp > 50){
-            P_Piezo = J_Piezo(time_temp, 60, 0.5, -70);
+        if(counter % 100 < 30){
+            P_Piezo = J_Piezo(counter, 60, 0.5, -70);
         }
         else{
-            P_Piezo = J_Piezo(time_temp, 10, 0.5, -70);
+            P_Piezo = J_Piezo(counter, 10, 0.5, -70);
         }
 
         double avg_temp = 0; 
@@ -295,32 +302,36 @@ double main2(int x){
 
                 Piezo_current = P_Piezo_temp*G_Piezo_single*(N_Piezo_channels/(2*x_max + 2*y_max));
 
-                vec_time[1][i][j] = vec_time[0][i][j] + Compute_J_on(vec_time[0][i][j]) + Piezo_current - Compute_efflux(vec_time[0][i][j], location);
+                vec_time[1][i][j] = vec_time[0][i][j] + Compute_J_on(vec_time[0][i][j]) + Piezo_current - Compute_J_efflux(vec_time[0][i][j], location);
                 
                 avg_temp += vec_time[1][i][j];
             }
         }
 
-        avg_temp = avg_temp/(x_max * y_max);
+        avg_temp = avg_temp/((x_max + 1) * (y_max + 1));
 
         vec_average.push_back(avg_temp);
 
         vec_time[1] = Compute_J_diffusion(vec_time[1]);
 
-        for (int x = 0; x <= x_max; x++){
-            for (int y = 0; y <= y_max; y++){  
-                if(y < y_max) {
-                    myfile << vec_time[1][x][y] << ",";
-                }  
-                else {
-                    myfile << vec_time[1][x][y];
+        
+        if(time_temp > 200){
+            for (int x = 0; x <= x_max; x++){
+                for (int y = 0; y <= y_max; y++){  
+                    if(y < y_max) {
+                        myfile << vec_time[1][x][y] << ",";
+                    }  
+                    else {
+                        myfile << vec_time[1][x][y];
+                    }
                 }
+                myfile << "\n";
             }
             myfile << "\n";
         }
-        myfile << "\n";
 
         vec_time[0] = vec_time[1];
+        counter++;
     }
 
     return(0);
@@ -345,7 +356,7 @@ double output_avg(double x)
 
     myfile << "Average\n";
 
-    for (int i = 0; i < max_size; i++)
+    for (int i = 200; i < max_size; i++)
     {
         bool_average = (vec_average.size() > i) ? true : false;
         
@@ -362,7 +373,7 @@ double output_avg(double x)
 int main(void) {
     cout << "Begin" << endl;
 
-    main2(0);
+    Model_Growth_Cone(0);
     output_avg(0);
 
     cout << "End" << endl;
