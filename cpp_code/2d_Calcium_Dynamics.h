@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <random>
 #include <Eigen/Dense>
+#include <fftw3.h>
 
 using namespace Eigen;
 using namespace std;
@@ -19,7 +20,7 @@ double divs = (x_max + 1) * (y_max + 1);
 double mols_divs = 0.0000000012/divs;
 
 double time_max = 500; //in s
-double delta_T = 1; // in s
+double delta_T = 2; // in s
 
 double delta_X = cell_size/x_max; 
 

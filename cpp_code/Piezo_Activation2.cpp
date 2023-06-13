@@ -165,28 +165,28 @@ double Piezo_Channel(int time, double pressure_temp){
     // }
 
     if(pressure_temp == 10){
-        vec_current10.push_back(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]);
-        vec_P_total10.push_back(-0.25*vec_open2[time]);
+        vec_current10.push_back(50*(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]));
+        vec_P_total10.push_back(50*(-0.25*vec_open2[time]));
     }
     else if(pressure_temp == 20){
-        vec_current20.push_back(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]);
-        vec_P_total20.push_back(-0.25*vec_open2[time]);
+        vec_current20.push_back(50*(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]));
+        vec_P_total20.push_back(50*(-0.25*vec_open2[time]));
     }
     else if(pressure_temp == 30){
-        vec_current30.push_back(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]);
-        vec_P_total30.push_back(-0.25*vec_open2[time]);
+        vec_current30.push_back(50*(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]));
+        vec_P_total30.push_back(50*(-0.25*vec_open2[time]));
     }
     else if(pressure_temp == 40){
-        vec_current40.push_back(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]);
-        vec_P_total40.push_back(-0.25*vec_open2[time]);
+        vec_current40.push_back(50*(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]));
+        vec_P_total40.push_back(50*(-0.25*vec_open2[time]));
     }
     else if(pressure_temp == 50){
-        vec_current50.push_back(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]);
-        vec_P_total50.push_back(-0.25*vec_open2[time]);
+        vec_current50.push_back(50*(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]));
+        vec_P_total50.push_back(50*(-0.25*vec_open2[time]));
     }
     else{
-        vec_current60.push_back(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]);
-        vec_P_total60.push_back(-0.25*vec_open2[time]);
+        vec_current60.push_back(50*(-15*vec_open1[time] + -2*vec_inactive_held[time] + -0.25*vec_open2[time]));
+        vec_P_total60.push_back(50*(-0.25*vec_open2[time]));
     }
 
     return(0);

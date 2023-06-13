@@ -5,15 +5,36 @@ const char *path2="../data_files/2d_Piezo_Channel_avg.csv";
 
 default_random_engine generator; //important: must be outside of the loop/method that calls it
 
-normal_distribution<double> stiffness(0.7,0.1);
-normal_distribution<double> pressure(30,5);
+normal_distribution<double> stiffness(0.5,0.03);
+normal_distribution<double> pressure(0,1);
 normal_distribution<double> voltage(-70,10);
 
-// Questions for Dr. Mori: 
-// 1) How to convert from current to molar content (or, do we need to?)
-// 2) Ca2+ accumulation at the corners---double counted or inherent?
-// 3) delta_T seems to not be perfect---i.e., increasing delta_T doesn't seem to be linear
-// 4) Should we solve for concentration or mols/division
+
+// vector<double> FFT(vector<double> A, vector<double> B){
+//     int size = A.size();
+//     double temp[size]; 
+//     double temp2[size]; 
+
+//     for(int i = 0; i < size; i++){
+//         temp[i] = A[i];
+//     }
+
+//     fftw_complex *in, *out;
+//     fftw_plan p;
+
+//     in = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * size);
+//     out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * size);
+//     p = fftw_plan_dft_1d(size, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+
+//     fftw_execute(p); 
+
+//     fftw_destroy_plan(p);
+//     fftw_free(in); 
+//     fftw_free(out);
+
+//     return(A);
+// }
+
 
 MatrixXd Pairwise_distances(MatrixXd A, MatrixXd B){
     MatrixXd Distances(A.cols(),B.cols());
@@ -248,6 +269,9 @@ double Model_Growth_Cone(int x){
     ofstream myfile;
     myfile.open(path1);
 
+    random_device rd;
+    mt19937 gen(rd());
+
     for(int i = 0; i <= x_max; i++){
         for(int j = 0; j <= y_max; j++){
             vec_time[0][i][j] = 0.00000012;
@@ -267,10 +291,10 @@ double Model_Growth_Cone(int x){
         double P_Piezo;
 
         if(counter % 100 < 30){
-            P_Piezo = J_Piezo(counter, 60, 0.5, -70);
+            P_Piezo = J_Piezo(counter, 60, stiffness(generator), voltage(generator));
         }
         else{
-            P_Piezo = J_Piezo(counter, 10, 0.5, -70);
+            P_Piezo = J_Piezo(counter, abs(pressure(generator)), abs(stiffness(generator)), voltage(generator));
         }
 
         double avg_temp = 0; 
@@ -300,7 +324,10 @@ double Model_Growth_Cone(int x){
                     P_Piezo_temp = 0; 
                 }
 
-                Piezo_current = P_Piezo_temp*G_Piezo_single*(N_Piezo_channels/(2*x_max + 2*y_max));
+                discrete_distribution<> distrib({1 - P_Piezo_temp, P_Piezo_temp});
+                int temp = distrib(gen);
+
+                Piezo_current = temp*G_Piezo_single*(N_Piezo_channels/(2*x_max + 2*y_max));
 
                 vec_time[1][i][j] = vec_time[0][i][j] + Compute_J_on(vec_time[0][i][j]) + Piezo_current - Compute_J_efflux(vec_time[0][i][j], location);
                 
@@ -315,7 +342,7 @@ double Model_Growth_Cone(int x){
         vec_time[1] = Compute_J_diffusion(vec_time[1]);
 
         
-        if(time_temp > 200){
+        if(time_temp > 100){
             for (int x = 0; x <= x_max; x++){
                 for (int y = 0; y <= y_max; y++){  
                     if(y < y_max) {
@@ -356,8 +383,7 @@ double output_avg(double x)
 
     myfile << "Average\n";
 
-    for (int i = 200; i < max_size; i++)
-    {
+    for (int i = 100; i < max_size; i++){
         bool_average = (vec_average.size() > i) ? true : false;
         
         if(bool_average) myfile << vec_average[i];
