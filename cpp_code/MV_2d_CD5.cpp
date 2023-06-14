@@ -39,14 +39,14 @@ double F = 96485.3321;
 double body_temp = 310.15;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 // Piezo Initializaiton %%%%%%%%%%%%%%%%%%%%
 vector<double> vec_open1; // first open state
 vector<double> vec_inactive; // inactive state
 vector<double> vec_inactive_held; // held open state
 vector<double> vec_closed; // closed state
+int N_Piezo_channels = 20000; // Total number of Piezo channels in entire growth cone
 
-// Eigen initialization
+// Eigen initializatio n%%%%%%%%%%%%%%%%%%%%
 MatrixXd A_cols, A_rows; // Both are the ... 1, -2, 1, ... matrices for rows & cols
 
 default_random_engine generator; // Random generator used to add stochasticity
@@ -54,7 +54,87 @@ normal_distribution<double> stiffness(0.5,0.03);
 normal_distribution<double> pressure(0,1);
 normal_distribution<double> voltage(-70,10);
 
+// Gill initialization %%%%%%%%%%%%%%%%%%%%%
+vector<vector<double> > Gillespie_Datatype(N_Piezo_channels, vector<double>(4));
+
+// Data type key: 
+// 0         1          2         3          4        
+ // index     x          y         state      time
+
+// States: 
+// 0         1          2         3          
+// Open1     Open2      Inact     Closed
+
+int dimensions = 2*(x_max + 1) + 2*(y_max + 1);
+int scale = dimensions-4;
+vector<vector<double> > positions_key(scale, vector<double>(2));
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double conduct_to_conc(double C, int charge){
+    double Q, delta_concentration, mols; 
+    double V = -70; 
+
+    Q = -1*(C*V*delta_T)/charge; 
+    mols = pow(10,9) * (Q / (6.022 * pow(10,23))); 
+    delta_concentration = mols / (delta_X * delta_X);
+
+    return(delta_concentration);
+}
+
+double initialize_Gill(int x){
+    vector<double> temp; 
+
+    int counter = 0; 
+
+    for(int i = 0; i <= y_max-1; i++){
+        temp.push_back(0);
+        temp.push_back(i);
+        positions_key[counter] = temp;
+        counter++;
+        temp.clear();
+    }
+    for(int i = 0; i <= y_max; i++){
+        temp.push_back(x_max);
+        temp.push_back(i);
+        positions_key[counter] = temp;
+        counter++;
+        temp.clear();
+    }
+    for(int i = 1; i <= x_max-1; i++){ // x_max - 1 prevents double counting of corners
+        temp.push_back(i);
+        temp.push_back(0);
+        positions_key[counter] = temp;
+        counter++;
+        temp.clear();
+    }
+    for(int i = 0; i <= x_max-1; i++){
+        temp.push_back(i);
+        temp.push_back(y_max);
+        positions_key[counter] = temp;
+        counter++;
+        temp.clear();
+    }
+  
+    for(int i = 0; i < Gillespie_Datatype.size(); i++){
+        int temp = rand() % scale;
+        Gillespie_Datatype[i][0] = i; 
+        Gillespie_Datatype[i][1] = positions_key[temp][0];
+        Gillespie_Datatype[i][2] = positions_key[temp][1];
+        Gillespie_Datatype[i][3] = 0;
+        Gillespie_Datatype[i][4] = 0;
+    }
+
+    for(int i = 0; i < Gillespie_Datatype.size(); i++){
+        double P_x = 0.3; // Probability
+        double temp_rand = (float) rand()/RAND_MAX; // Generate random number
+        double temp_scaled_rand = -pow(P_x,-1)*log(temp_rand); // Generate random time
+        Gillespie_Datatype[i][4] = round(temp_scaled_rand/delta_T)*delta_T; // Scale random time to nearest delta_T
+    }
+
+    return(0);
+}
 
 MatrixXd mat_std_to_Eigen(vector<vector<double>> convert_me){
     // Converts from std class to Eigen class
@@ -199,6 +279,61 @@ double Probability_of_Piezo(int time_counter, double Pressure_input, double Subs
     return(p);
 }
 
+double run_Gill(int time, double Pressure_input){
+    for(int i = 0; i < Gillespie_Datatype.size(); i++){
+        int local_x = Gillespie_Datatype[i][1]; 
+        int local_y = Gillespie_Datatype[i][2]; 
+
+        if(Gillespie_Datatype[i][3] == 0 || Gillespie_Datatype[i][3] == 1){
+            vec_time[0][local_x][local_y] = vec_time[0][local_x][local_y] + 1; 
+        }
+
+        if(Gillespie_Datatype[i][4] < delta_T){
+            double P_x;
+            if(Gillespie_Datatype[i][3] == 0){
+                P_x = vec_open1[time];
+
+                double P_1 = 1/(exp((30 - Pressure_input)/6) + 1);
+
+                double controller = (float) rand()/RAND_MAX;
+
+                if(controller > P_1){
+                    Gillespie_Datatype[i][3] = 2; 
+                }
+                else{
+                    Gillespie_Datatype[i][3] = 1; 
+                }
+                vec_time[1][local_x][local_y] = vec_time[1][local_x][local_y] + conduct_to_conc(0.000000000030,2);
+            }   
+            else if(Gillespie_Datatype[i][3] == 1){
+                P_x = vec_inactive_held[time];
+                Gillespie_Datatype[i][3] = 2; 
+                vec_time[1][local_x][local_y] = vec_time[1][local_x][local_y] + conduct_to_conc(0.000000000030,2);
+                cout << vec_time[1][local_x][local_y] << " + " << conduct_to_conc(0.000000000030,2) << endl;
+            }   
+            else if(Gillespie_Datatype[i][3] == 2){
+                P_x = vec_inactive[time];
+                Gillespie_Datatype[i][3] = 3; 
+            }   
+            else if(Gillespie_Datatype[i][3] == 3){
+                P_x = vec_closed[time];
+                Gillespie_Datatype[i][3] = 0; 
+            }   
+            else{
+                cout << "We have a serious problem!" << endl;
+            }
+
+            double temp_rand = (float) rand()/RAND_MAX; // Generate random number
+            double temp_scaled_rand = -pow(P_x,-1)*log(temp_rand); // Generate random time
+            Gillespie_Datatype[i][4] = round(temp_scaled_rand/delta_T)*delta_T; // Scale random time to nearest delta_T
+        }
+
+        Gillespie_Datatype[i][4] =  Gillespie_Datatype[i][4] - delta_T; 
+    }
+    return(0);
+}
+
+
 double Compute_J_efflux(double C_cyt, int loc){
     // efflux is calculated by magnitude of difference between edge piece and desired concentration of 120nm
     double efflux;
@@ -264,19 +399,30 @@ double Model_Growth_Cone(int x){ // This method calls all other methods used in 
         }
     }
 
+    double P_P; 
     vec_average.push_back(0.00000012); // First value of average vector is 120nM
 
     int counter = 0; // counter counts up with time in integer values, i.e., rather than with delta_T it is 1 every time
     for(double time_temp = 0; time_temp <= time_max; time_temp+=delta_T){
+
         cout << time_temp << endl; // prints the time, to see progress in the code
 
         double P_Piezo; // this is the probability of Piezo being open, and is solved by calling Probability_of_Piezo()
 
-        if(counter % 100 < 30){ // used to simulate force being applied at regular intervals
+        if(counter == 250){
+            P_P = 60;
+            P_Piezo = Probability_of_Piezo(counter, 60, stiffness(generator), voltage(generator));
+            for(int i = 0; i < Gillespie_Datatype.size(); i++){
+                Gillespie_Datatype[i][3] = -10; 
+            }
+        }
+        else if(counter > 250){ // used to simulate force being applied at regular intervals
+            P_P = 60;
             P_Piezo = Probability_of_Piezo(counter, 60, stiffness(generator), voltage(generator));
         }
         else{
-            P_Piezo = Probability_of_Piezo(counter, abs(pressure(generator)), abs(stiffness(generator)), voltage(generator));
+            P_P = abs(pressure(generator));
+            P_Piezo = Probability_of_Piezo(counter, P_P, abs(stiffness(generator)), voltage(generator));
         }
 
         double avg_temp = 0; // used to average the concentration in the growth cone
@@ -300,16 +446,9 @@ double Model_Growth_Cone(int x){ // This method calls all other methods used in 
 
                 // Uses P_Piezo as probability to generate a 1 (representing open) or 0 (representing closed)
                 // This is done for each edge position to quantize opening vs. closing as opposed to a decimal value
-                discrete_distribution<> distrib({1 - P_Piezo, P_Piezo});
-                int On_Off_rand = distrib(gen); 
-
-                double Piezo_current;
-                double G_Piezo_single = 0.000000000030; //Conductance of single channel
-                int N_Piezo_channels = 100000; // Total number of Piezo channels in entire growth cone
-                Piezo_current = On_Off_rand*location*G_Piezo_single*(N_Piezo_channels/(2*x_max + 2*y_max)); // Solves current generated Piezo
 
                 // Total Ca2+ for each position:
-                vec_time[1][i][j] = vec_time[0][i][j] + Compute_J_on(vec_time[0][i][j]) + Piezo_current - Compute_J_efflux(vec_time[0][i][j], location);
+                vec_time[1][i][j] = vec_time[0][i][j] + Compute_J_on(vec_time[0][i][j]) - Compute_J_efflux(vec_time[0][i][j], location);
                 
                 avg_temp += vec_time[1][i][j]; // Sums the total Ca2+, which is then used to compute the average
             }
@@ -320,7 +459,8 @@ double Model_Growth_Cone(int x){ // This method calls all other methods used in 
         vec_average.push_back(avg_temp); // Stores the averages
 
         vec_time[1] = Compute_J_diffusion(vec_time[1]); // Diffuses all the Ca2+ within the growth cone
-
+        
+        run_Gill(0, P_P);
         
         if(time_temp > 100){ // Writes out the growth cone matrix (vec_time) to .csv file
         // Writing out begins after time 100, which is in order to allow the matrix to reach equilibrium
