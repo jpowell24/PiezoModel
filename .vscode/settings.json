@@ -17,7 +17,12 @@
         "random": "cpp",
         "initializer_list": "cpp",
         "string": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "ratio": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     },
     "workbench.colorCustomizations": {
         "terminal.background":"#1D2021",
