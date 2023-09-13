@@ -24,7 +24,7 @@ double tau_n, tau_m, tau_h;
 double V_dt; 
 vector<double> vec_V, vec_Na_I, vec_K_I, vec_L_I;
 vector<double> vec_Nap, vec_Kp;
-vector<double> vec_VWT;
+vector<double> vec_VWT, vec_V2;
 double C_m = 1; 
 
 double g_k = 36; 
