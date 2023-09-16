@@ -14,6 +14,7 @@ using namespace std;
 const char *path1="../data_files/Piezo_Channel.csv";
 const char *path2="../data_files/static_wt_output.csv";
 
+
 default_random_engine generator;
 normal_distribution<double> stochastic_opening(0,4);
 
@@ -76,6 +77,10 @@ double dynamical_m(double V){
 
 
 double Static_WT_AP(double local_g_k){
+
+        ofstream create_file(path1);
+        ofstream myfile;
+        myfile.open(path1);
     
         // if(static_ap_counter >= 5000){
         //   current = 5;
@@ -101,8 +106,6 @@ double Static_WT_AP(double local_g_k){
         Na_I_temp = (g_Na*pow(vec_m[static_ap_counter+1],3)*pow(vec_h[static_ap_counter+1],1)*((vec_V[static_ap_counter]) - E_Na));
         L_I_temp = (g_l*((vec_V[static_ap_counter]) - E_l));
 
-        cout << K_I_temp << endl;
-
         V_dt = (current - K_I_temp - Na_I_temp - L_I_temp)/C_m;
 
         if(local_g_k > 20){
@@ -117,6 +120,9 @@ double Static_WT_AP(double local_g_k){
         vec_L_I.push_back(L_I_temp);
 
         static_ap_counter++; 
+
+        myfile.close();
+
     return(0);
 }
 
@@ -165,7 +171,7 @@ double output_WT_Static_AP(double x)
     bool Na_I; 
     bool L_I; 
     
-    //cout << "Break point 4" << endl;
+    cout << "Break point 4" << endl;
 
     // myfile << "V,K_I,Na_I,L_I\n";
     // for (int i = 0; i < max_size; i++)
